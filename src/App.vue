@@ -3,8 +3,6 @@
     <!-- 图片 -->
     <img src="./assets/logo.png" />
     <router-link to="/">首页</router-link>
-    <router-link to="/demo1">demo1</router-link>
-    <router-link to="/demo2">demo2</router-link>
     <!-- 路由视图 -->
     <router-view />
   </div>

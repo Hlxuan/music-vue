@@ -1,13 +1,65 @@
 <template>
-  <el-table :data="tableData" style="width: 100%">
-    <el-table-column prop="id" label="编号" width="180"> </el-table-column>
-    <el-table-column prop="username" label="用户名称" width="180">
-    </el-table-column>
-    <el-table-column prop="password" label="用户密码"> </el-table-column>
-    <el-table-column prop="sex" label="性别"> </el-table-column>
-    <el-table-column prop="phoneNum" label="手机号码"> </el-table-column>
-  </el-table>
+  <div>
+    <p><el-button @click="handleAdd">新增</el-button></p>
+    <!-- dom 数据 绑定了数据源tableData -->
+    <el-table :data="tableData" style="width: 100%">
+      <el-table-column prop="id" label="编号" width="180"> </el-table-column>
+      <el-table-column prop="username" label="姓名" width="180">
+      </el-table-column>
+      <el-table-column prop="password" label="密码"> </el-table-column>
+      <el-table-column prop="sex" label="性别"> </el-table-column>
+      <el-table-column prop="phoneNum" label="手机号码"> </el-table-column>
+      <el-table-column label="操作">
+        <template slot-scope="scope">
+          <el-button size="mini" @click="handleEdit(scope.$index, scope.row)"
+            >修改</el-button
+          >
+          <el-button
+            size="mini"
+            type="danger"
+            @click="handleDelete(scope.$index, scope.row)"
+            >删除</el-button
+          >
+        </template>
+      </el-table-column>
+    </el-table>
+    <!-- 对话框 -->
+    <el-dialog
+      title="提示"
+      :visible.sync="dialogVisible"
+      width="30%"
+      :before-close="handleClose"
+    >
+      <!-- :model="form" 绑定了某个对象 -->
+      <el-form ref="form" :model="form" label-width="80px">
+        <el-form-item label="名称">
+          <el-input v-model="form.username"></el-input>
+        </el-form-item>
+        <el-form-item label="密码">
+          <el-input v-model="form.password"></el-input>
+        </el-form-item>
+        <el-form-item label="性别">
+          <el-select
+            v-model="form.sex"
+            style="width: 100%"
+            placeholder="请选择性别"
+          >
+            <el-option label="男" value="1"></el-option>
+            <el-option label="女" value="0"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="手机">
+          <el-input v-model="form.phoneNum"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="submit">确 定</el-button>
+      </span>
+    </el-dialog>
+  </div>
 </template>
+<!-- js 中有对象数据 -->
 <script>
 import request from "../utils/request";
 export default {
@@ -15,13 +67,91 @@ export default {
   data() {
     return {
       tableData: [],
+      dialogVisible: false,
+      form: {
+        id: "",
+        username: "",
+        password: "",
+        sex: "",
+        phoneNum: "",
+      },
     };
-  }, //生命周期：vue创建成功后触发的函数
+  },
+  //生命周期：vue创建成功后触发的函数
   created: function () {
-    //发起查询
-    request.get("/consumer/list").then((res) => {
-      this.tableData = res;
-    });
+    this.query();
+  },
+  //定义函数集
+  methods: {
+    //查询处理函数
+    query() {
+      request.get("/consumer/list").then((res) => {
+        this.tableData = res.list;
+      });
+    }, // 点击编辑
+    handleEdit(index, row) {
+      console.log(index, row); //显示对话框
+      this.dialogVisible = true; //将row赋值到form
+      this.form.id = row.id;
+      this.form.username = row.username;
+      this.form.password = row.password;
+      this.form.sex = row.sex;
+      this.form.phoneNum = row.phoneNum;
+    },
+    handleAdd() {
+      //显示对话框
+      this.dialogVisible = true; //清空form中的数据
+      this.form = {
+        id: "",
+        username: "",
+        password: "",
+        sex: "",
+        phoneNum: "",
+      };
+    },
+    //提交处理-发起请求
+    submit() {
+      //发起查询
+      request.post("/consumer/update", this.form).then((res) => {
+        if (res.success == true) {
+          this.$message({
+            message: "操作成功",
+            type: "success",
+          }); //关闭对话框
+          this.dialogVisible = false; //重新查询数据
+          this.query();
+        } else {
+          this.$message.error("操作失败");
+        }
+      });
+    },
+    //删除处理
+    handleDelete(index, row) {
+      request
+        .get("/consumer/delete", {
+          params: {
+            id: row.id,
+          },
+        })
+        .then((res) => {
+          if (res.success == true) {
+            this.$message({
+              message: "删除成功",
+              type: "success",
+            }); //重新查询数据
+            this.query();
+          } else {
+            this.$message.error("删除失败");
+          }
+        });
+    },
+    handleClose(done) {
+      this.$confirm("确认关闭？")
+        .then((_) => {
+          done();
+        })
+        .catch((_) => {});
+    },
   },
 };
 </script>

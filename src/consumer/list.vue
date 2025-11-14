@@ -34,6 +34,20 @@
         </template>
       </el-table-column>
     </el-table>
+
+    <!-- 分页 -->
+
+    <el-pagination
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page="pageNum"
+      :page-sizes="[4, 10, 20, 50]"
+      :page-size="size"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="total"
+    >
+    </el-pagination>
+
     <!-- 对话框 -->
     <el-dialog
       title="提示"
@@ -87,6 +101,9 @@ export default {
         phoneNum: "",
       },
       name: "",
+      pageNum: 1,
+      size: 4,
+      total: 0,
     };
   },
   //生命周期：vue创建成功后触发的函数
@@ -95,16 +112,31 @@ export default {
   },
   //定义函数集
   methods: {
+    //记录条数的变化
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`); //变更查询条数
+      this.size = val; //查询数据
+      this.query();
+    }, //页码的变化
+    handleCurrentChange(val) {
+      console.log(`当前页: ${val}`); //变更当前页码
+      this.pageNum = val; //查询数据
+      this.query();
+    },
     //查询处理函数
     query() {
       request
         .get("/consumer/list", {
           params: {
             name: this.name,
+            pageNum: this.pageNum,
+            size: this.size,
           },
         })
         .then((res) => {
-          this.tableData = res.list;
+          //把集合赋值给了tableData
+          this.tableData = res.list; //把total赋值
+          this.total = res.total;
         });
     },
     handleAdd() {

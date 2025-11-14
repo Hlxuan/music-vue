@@ -10,6 +10,7 @@
         style="width: 300px"
       ></el-input>
       <el-button type="success" @click="query">查询</el-button>
+      <el-button type="primary" @click="handleAdd">新增</el-button>
     </p>
     <!-- dom 数据 绑定了数据源tableData -->
     <el-table :data="tableData" style="width: 100%">
@@ -105,6 +106,17 @@ export default {
         .then((res) => {
           this.tableData = res.list;
         });
+    },
+    handleAdd() {
+      //显示对话框
+      this.dialogVisible = true; //清空form中的数据
+      this.form = {
+        id: "",
+        username: "",
+        password: "",
+        sex: "",
+        phoneNum: "",
+      };
     },
     // 点击编辑
     handleEdit(index, row) {

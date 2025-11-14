@@ -1,6 +1,16 @@
 <template>
   <div>
-    <p><el-button @click="handleAdd">新增</el-button></p>
+    <p>
+      <!-- v-model="name"绑定了变量name -->
+
+      <el-input
+        v-model="name"
+        placeholder="请输入关键字"
+        clearable
+        style="width: 300px"
+      ></el-input>
+      <el-button type="success" @click="query">查询</el-button>
+    </p>
     <!-- dom 数据 绑定了数据源tableData -->
     <el-table :data="tableData" style="width: 100%">
       <el-table-column prop="id" label="编号" width="180"> </el-table-column>
@@ -75,6 +85,7 @@ export default {
         sex: "",
         phoneNum: "",
       },
+      name: "",
     };
   },
   //生命周期：vue创建成功后触发的函数
@@ -85,10 +96,17 @@ export default {
   methods: {
     //查询处理函数
     query() {
-      request.get("/consumer/list").then((res) => {
-        this.tableData = res.list;
-      });
-    }, // 点击编辑
+      request
+        .get("/consumer/list", {
+          params: {
+            name: this.name,
+          },
+        })
+        .then((res) => {
+          this.tableData = res.list;
+        });
+    },
+    // 点击编辑
     handleEdit(index, row) {
       console.log(index, row); //显示对话框
       this.dialogVisible = true; //将row赋值到form

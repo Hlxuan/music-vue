@@ -17,19 +17,19 @@
       <el-table-column prop="id" label="编号" width="180"> </el-table-column>
       <el-table-column prop="username" label="姓名" width="180">
       </el-table-column>
-      <el-table-column prop="password" label="密码"> </el-table-column>
-      <el-table-column prop="sex" label="性别">
-        <template slot-scope="scope">
-          <span v-if="scope.row.sex === 1">男</span>
-          <span v-else-if="scope.row.sex === 0">女</span>
-        </template>
-      </el-table-column>
       <el-table-column prop="avator" label="头像">
         <template slot-scope="scope">
           <img
             :src="getImageUrl(scope.row.avator)"
             style="width: 80px; height: 80px"
           />
+        </template>
+      </el-table-column>
+      <el-table-column prop="password" label="密码"> </el-table-column>
+      <el-table-column prop="sex" label="性别">
+        <template slot-scope="scope">
+          <span v-if="scope.row.sex === 1">男</span>
+          <span v-else-if="scope.row.sex === 0">女</span>
         </template>
       </el-table-column>
       <el-table-column prop="phoneNum" label="手机号码"> </el-table-column>

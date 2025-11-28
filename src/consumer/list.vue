@@ -18,7 +18,12 @@
       <el-table-column prop="username" label="姓名" width="180">
       </el-table-column>
       <el-table-column prop="password" label="密码"> </el-table-column>
-      <el-table-column prop="sex" label="性别"> </el-table-column>
+      <el-table-column prop="sex" label="性别">
+        <template slot-scope="scope">
+          <span v-if="scope.row.sex === 1">男</span>
+          <span v-else-if="scope.row.sex === 0">女</span>
+        </template>
+      </el-table-column>
       <el-table-column prop="avator" label="头像">
         <template slot-scope="scope">
           <img

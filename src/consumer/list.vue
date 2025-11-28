@@ -19,6 +19,14 @@
       </el-table-column>
       <el-table-column prop="password" label="密码"> </el-table-column>
       <el-table-column prop="sex" label="性别"> </el-table-column>
+      <el-table-column prop="avator" label="头像">
+        <template slot-scope="scope">
+          <img
+            :src="getImageUrl(scope.row.avator)"
+            style="width: 80px; height: 80px"
+          />
+        </template>
+      </el-table-column>
       <el-table-column prop="phoneNum" label="手机号码"> </el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
@@ -57,6 +65,19 @@
     >
       <!-- :model="form" 绑定了某个对象 -->
       <el-form ref="form" :model="form" label-width="80px">
+        <el-form-item label="头像">
+          <!-- 上传组件 -->
+          <el-upload
+            class="avatar-uploader"
+            action="http://localhost:8085/music/file/avatar/upload"
+            :show-file-list="false"
+            :on-success="handleAvatarSuccess"
+            :before-upload="beforeAvatarUpload"
+          >
+            <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+          </el-upload>
+        </el-form-item>
         <el-form-item label="名称">
           <el-input v-model="form.username"></el-input>
         </el-form-item>
@@ -84,6 +105,31 @@
     </el-dialog>
   </div>
 </template>
+<style>
+.avatar-uploader .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.avatar-uploader .el-upload:hover {
+  border-color: #409eff;
+}
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 178px;
+  height: 178px;
+  line-height: 178px;
+  text-align: center;
+}
+.avatar {
+  width: 178px;
+  height: 178px;
+  display: block;
+}
+</style>
 <!-- js 中有对象数据 -->
 <script>
 import request from "../utils/request";
@@ -94,12 +140,17 @@ export default {
       tableData: [],
       dialogVisible: false,
       form: {
-        id: "",
         username: "",
         password: "",
         sex: "",
         phoneNum: "",
+        avatar: "",
       },
+      name: "",
+      pageNum: 1,
+      size: 4,
+      total: 0,
+      imageUrl: "",
       name: "",
       pageNum: 1,
       size: 4,
@@ -152,8 +203,11 @@ export default {
     },
     // 点击编辑
     handleEdit(index, row) {
-      console.log(index, row); //显示对话框
-      this.dialogVisible = true; //将row赋值到form
+      console.log(index, row);
+      this.imageUrl = "";
+      //显示对话框
+      this.dialogVisible = true;
+      //将row赋值到form
       this.form.id = row.id;
       this.form.username = row.username;
       this.form.password = row.password;
@@ -170,6 +224,7 @@ export default {
         sex: "",
         phoneNum: "",
       };
+      this.imageUrl = "";
     },
     //提交处理-发起请求
     submit() {
@@ -213,6 +268,27 @@ export default {
           done();
         })
         .catch((_) => {});
+    },
+    //上传成功后的处理函数
+    handleAvatarSuccess(res, file) {
+      this.imageUrl = URL.createObjectURL(file.raw); //给avator赋值
+      this.form.avator = res.path;
+      console.log("this.form.avatar=" + this.form.avatar);
+    }, //上传之前的处理函数
+    beforeAvatarUpload(file) {
+      const isJPG = file.type === "image/jpeg" || file.type === "image/png";
+      const isLt10M = file.size / 1024 / 1024 < 10;
+      if (!isJPG) {
+        this.$message.error("上传头像图片只能是 JPG\png 格式!");
+      }
+      if (!isLt10M) {
+        this.$message.error("上传头像图片大小不能超过 10MB!");
+      }
+      return isJPG && isLt10M;
+    },
+    //用于拼接完整的图片访问地址
+    getImageUrl(path) {
+      return "http://localhost:8085" + path;
     },
   },
 };

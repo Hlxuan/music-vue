@@ -13,6 +13,10 @@ export default new Router({
           path: "/consumer_list",
           name: "consumer_list",
           component: () => import("@/consumer/list"),
+        }, {
+          path: "/singer_list",
+          name: "singer_list",
+          component: () => import("@/singer/list"),
         },
       ],
     },

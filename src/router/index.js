@@ -18,6 +18,11 @@ export default new Router({
           name: "singer_list",
           component: () => import("@/singer/list"),
         },
+        {
+          path: "/songList_list",
+          name: "songList_list",
+          component: () => import("@/songList/list"),
+        },
       ],
     },
   ],

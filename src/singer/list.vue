@@ -69,7 +69,7 @@
     >
       <!-- :model="form" 绑定了某个对象 -->
       <el-form ref="form" :model="form" label-width="80px">
-        <el-form-item label="头像">
+        <el-form-item label="图片">
           <!-- 上传组件 -->
           <el-upload
             class="avatar-uploader"
@@ -213,10 +213,10 @@ export default {
       this.dialogVisible = true;
       //将row赋值到form
       this.form.id = row.id;
-      this.form.username = row.username;
-      this.form.password = row.password;
+      this.form.name = row.name;
+      this.form.birth = row.birth;
       this.form.sex = row.sex;
-      this.form.phoneNum = row.phoneNum;
+      this.form.location = row.location;
     },
     handleAdd() {
       //显示对话框

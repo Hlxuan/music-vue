@@ -73,7 +73,7 @@
           <!-- 上传组件 -->
           <el-upload
             class="avatar-uploader"
-            action="http://localhost:8085/music/file/avatar/upload"
+            action="http://localhost:8085/music/file/singer/upload"
             :show-file-list="false"
             :on-success="handleAvatarSuccess"
             :before-upload="beforeAvatarUpload"
@@ -144,11 +144,12 @@ export default {
       tableData: [],
       dialogVisible: false,
       form: {
-        username: "",
-        password: "",
+        id: "",
+        name: "",
+        birth: "",
         sex: "",
-        phoneNum: "",
-        avatar: "",
+        location: "",
+        pic: "",
       },
       name: "",
       pageNum: 1,
@@ -199,10 +200,11 @@ export default {
       this.dialogVisible = true; //清空form中的数据
       this.form = {
         id: "",
-        username: "",
-        password: "",
+        name: "",
+        birth: "",
         sex: "",
-        phoneNum: "",
+        location: "",
+        pic: "",
       };
     },
     // 点击编辑
@@ -217,16 +219,18 @@ export default {
       this.form.birth = row.birth;
       this.form.sex = row.sex;
       this.form.location = row.location;
+      this.form.pic = row.pic;
     },
     handleAdd() {
       //显示对话框
       this.dialogVisible = true; //清空form中的数据
       this.form = {
         id: "",
-        username: "",
-        password: "",
+        name: "",
+        birth: "",
         sex: "",
-        phoneNum: "",
+        location: "",
+        pic: "",
       };
       this.imageUrl = "";
     },
@@ -276,8 +280,8 @@ export default {
     //上传成功后的处理函数
     handleAvatarSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw); //给avator赋值
-      this.form.avator = res.path;
-      console.log("this.form.avatar=" + this.form.avatar);
+      this.form.pic = res.path;
+      console.log("this.form.pic=" + this.form.pic);
     }, //上传之前的处理函数
     beforeAvatarUpload(file) {
       const isJPG = file.type === "image/jpeg" || file.type === "image/png";
